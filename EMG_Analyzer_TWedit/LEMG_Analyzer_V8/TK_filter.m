@@ -30,7 +30,8 @@ function [Index,loc,final_temps] = TK_filter(sig,Fs,C,PsC_TH,init,wind,gr)
 % June 2015, Linkoping University
 % Please cite the paper if any of the methods were helpfull
 % This version is edited by Thomas Michael Wilmot
-% April 2018, Student of Sound and Music Computing MSc  
+% April 2018, Student of Sound and Music Computing MSc 
+% at Aalborg University
 %% Begin
 
 % Input handling
