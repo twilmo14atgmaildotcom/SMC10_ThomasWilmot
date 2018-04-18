@@ -72,18 +72,15 @@ clc;
 
 %% Synchronise data channels from IMU with EMG
 
-% Get indices for Time, EMG, Mag, Acc and Gyro channels
+% Get indices for Time, EMG, Mag, Acc and Gyro
 for idx_var=1:length(zworksp_idx)
     name_var=(zworksp_idx(idx_var).name);
     curr_var=eval(name_var);
-    columnName=fieldnames(curr_var(idx_var));
-    idx_Time=find(contains(columnName,'Xs')==1);
-    idx_EMG=find(contains(columnName,'EMG')==1);
-    idx_Acc=find(contains(columnName,'ACC')==1);
-    idx_Mag=find(contains(columnName,'Mag')==1);
-    idx_Gyro=find(contains(columnName,'Gyro')==1);
+    columnName=columnName=fieldnames(curr_var(idx_var));
+    idx_Time=find(contains(fieldnames(curr_var(idx_var)),'Xs')==1);
+    idx_EMG=find(contains(fieldnames(curr_var(idx_var)),'EMG')==1);
+    idx_Acc=find(contains(fieldnames(curr_var(idx_var)),'ACC')==1)
+        %curr_var2[]=seconds([curr_var.(idx_timechan{idx_chan})]');
+        %assignin('base',(strcat(zworksp_idx(idx_var).name,'.',idx_timechan{idx_chan})),curr_var2); 
 end
-
-
-
     
