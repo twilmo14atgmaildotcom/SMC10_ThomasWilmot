@@ -83,7 +83,21 @@ for idx_var=1:length(zworksp_idx)
     idx_Mag=find(contains(columnName,'Mag')==1);
     idx_Gyro=find(contains(columnName,'Gyro')==1);
 end
+clear('name_var', 'idx_var', 'curr_var');
 
+% Check maximum time and number of samples per recording
+for idx_var=1:length(zworksp_idx)
+    name_var=(zworksp_idx(idx_var).name);
+    curr_var=eval(name_var);
+    columnName=fieldnames(curr_var(idx_var));
+    for idx_chan=1:length(idx_Time);
+%eval(strcat(zworksp_idx(idx_var).name,'.',columnName{idx_Time(idx_chan)}))        
+%gf=getfield((zworksp_idx(idx_var).name),columnName{idx_Time(idx_chan)});%remove
+%'' from name of recording to use getfield method
+%mxTime{idx_chan,idx_var}=max();
 
+    end
+end
+clear('name_var', 'idx_var', 'curr_var');
 
     
