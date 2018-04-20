@@ -72,6 +72,12 @@ clc;
 
 %% Synchronise data channels from IMU with EMG
 
+% Sampling Frequency per sensor type as given by Delsys
+fs_EMG=1111.111; 
+fs_ACC=148.148148;
+fs_GYRO=148.148148;	
+fs_MAG=74.074074; %Note Xs time stamp for Mag is double actual time
+
 % Get indices for Time, EMG, Mag, Acc and Gyro channels
 for idx_var=1:length(zworksp_idx)
     name_var=(zworksp_idx(idx_var).name);
@@ -85,18 +91,30 @@ for idx_var=1:length(zworksp_idx)
 end
 clear('name_var', 'idx_var', 'curr_var');
 
+% Convert Structured Arrays to Matrices
+for idx_var=1:length(zworksp_idx)
+    name_var=(zworksp_idx(idx_var).name);
+    curr_var=eval(name_var);
+    curr_var2=struct2cell(curr_var);
+    curr_var3=cell2mat(curr_var2);
+    assignin('base',(zworksp_idx(idx_var).name),curr_var3);
+end
+clear('name_var', 'idx_var', 'curr_var','idx_chan', 'curr_var2', 'curr_var3')
+
+%Correct Time stamp on Magnetometer, Accelerometer and Gyroscope
+for idx_var=1:length(zworksp_idx)
+    name_var=(zworksp_idx(idx_var).name);
+    curr_var=eval(name_var);
+    curr_var([idx_Acc idx_Mag idx_Gyro]-1,:)=(curr_var([idx_Acc idx_Mag idx_Gyro]-1,:))/2;
+    assignin('base',(zworksp_idx(idx_var).name),curr_var);
+end
+clear('name_var', 'idx_var', 'curr_var','idx_chan', 'curr_var2', 'curr_var3')
+
 % Check maximum time and number of samples per recording
 for idx_var=1:length(zworksp_idx)
     name_var=(zworksp_idx(idx_var).name);
     curr_var=eval(name_var);
-    columnName=fieldnames(curr_var(idx_var));
-    for idx_chan=1:length(idx_Time);
-%eval(strcat(zworksp_idx(idx_var).name,'.',columnName{idx_Time(idx_chan)}))        
-%gf=getfield((zworksp_idx(idx_var).name),columnName{idx_Time(idx_chan)});%remove
-%'' from name of recording to use getfield method
-%mxTime{idx_chan,idx_var}=max();
-
-    end
+    [mx_Time  idx_mxTime]= max(curr_var(idx_Time,:)');
 end
 clear('name_var', 'idx_var', 'curr_var');
 

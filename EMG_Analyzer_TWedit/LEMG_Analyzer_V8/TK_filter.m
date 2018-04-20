@@ -29,9 +29,6 @@ function [Index,loc,final_temps] = TK_filter(sig,Fs,C,PsC_TH,init,wind,gr)
 % Hooman Sedghamiz
 % June 2015, Linkoping University
 % Please cite the paper if any of the methods were helpfull
-% This version is edited by Thomas Michael Wilmot
-% April 2018, Student of Sound and Music Computing MSc 
-% at Aalborg University
 %% Begin
 
 % Input handling
@@ -331,5 +328,8 @@ end
 assignin('base','MUAP_label',loc);
 assignin('base','MUAP_idx',Index);
 assignin('base','Templates',final_temps);
+% This version is edited by Thomas Michael Wilmot
+% April 2018, Student of Sound and Music Computing MSc 
+% at Aalborg University
 end
 
