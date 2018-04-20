@@ -1,6 +1,9 @@
 %% Delsys data reformatting by Thomas Michael Wilmot
 % Last updated: 17/04/18
 % for more information contact: twilmo14@student.aau.dk
+% This script is designed to import and synchronise data from the Delsys
+% trigno system into matlab. Note that this script will need editted if
+% input data has multiple different recording lengths.
 
 clear all;
 close all;
@@ -83,13 +86,13 @@ for idx_var=1:length(zworksp_idx)
     name_var=(zworksp_idx(idx_var).name);
     curr_var=eval(name_var);
     columnName=fieldnames(curr_var(idx_var));
-    idx_Time=find(contains(columnName,'Xs')==1);
-    idx_EMG=find(contains(columnName,'EMG')==1);
-    idx_Acc=find(contains(columnName,'ACC')==1);
-    idx_Mag=find(contains(columnName,'Mag')==1);
-    idx_Gyro=find(contains(columnName,'Gyro')==1);
+    idx_Time=find(contains(columnName,'Xs')==1);%edit left hand expression if recordings are different lengths
+    idx_EMG=find(contains(columnName,'EMG')==1);%edit left hand expression if recordings are different lengths
+    idx_Acc=find(contains(columnName,'ACC')==1);%edit left hand expression if recordings are different lengths
+    idx_Mag=find(contains(columnName,'Mag')==1);%edit left hand expression if recordings are different lengths
+    idx_Gyro=find(contains(columnName,'Gyro')==1);%edit left hand expression if recordings are different lengths
 end
-clear('name_var', 'idx_var', 'curr_var');
+clear('name_var', 'idx_var', 'curr_var','columnName');
 
 % Convert Structured Arrays to Matrices
 for idx_var=1:length(zworksp_idx)
@@ -114,8 +117,32 @@ clear('name_var', 'idx_var', 'curr_var','idx_chan', 'curr_var2', 'curr_var3')
 for idx_var=1:length(zworksp_idx)
     name_var=(zworksp_idx(idx_var).name);
     curr_var=eval(name_var);
-    [mx_Time  idx_mxTime]= max(curr_var(idx_Time,:)');
+    [mx_Time  idx_mxTime]= max(curr_var(idx_Time,:)');%edit left hand expression if recordings are different lengths
 end
 clear('name_var', 'idx_var', 'curr_var');
+
+% Check requested recording length in HPF files and compare to data
+n_rs=33333; % Number of requested samples. (30 seconds)
+ts=length(eval(zworksp_idx(1).name)); % Actual recording lenght in samples
+
+
+% Upsample and crop IMU data in order to synchronise it with EMG data
+for idx_var=1:length(zworksp_idx)
+    name_var=(zworksp_idx(idx_var).name);
+    curr_var=eval(name_var);
+    reSmpf=round(fs_EMG/fs_ACC,1);%resample factor=7.5
+    reSmpf=2*reSmpf; %Note this has to be integer and therefore the EMG data now must also be resampled by 2
+    [M N]=size(curr_var);
+    curr_var2=zeros(M,N*(2*reSmpf)); %Create empty matrix to hold larger dataset
+    curr_var2([idx_Acc idx_Gyro idx_Acc-1 idx_Gyro-1],:)=interp(curr_var([idx_Acc idx_Gyro idx_Acc-1 idx_Gyro-1],:),reSmpf); %resample Acc and Gyro    
+    curr_var2([idx_EMG idx_EMG-1],:)=interp(curr_var([idx_EMG idx_EMG-1],:),2); %resample EMG
+    curr_var2([idx_Mag idx_Mag-1],:)=interp(curr_var([idx_Mag idx_Mag-1],:),2*reSmpf); %resample Mag
+    assignin('base',(zworksp_idx(idx_var).name),curr_var2(:,1:ts*2));
+end
+clear('name_var', 'idx_var', 'curr_var','reSmpf');
+
+%INTERP NOT POSSIBLE TO USE FOR SINGLE COLUMNS IN MATRIX. MUST SEPARATE
+%MATRICES INTO SENSOR BY SENSOR MATRICES.
+
 
     
